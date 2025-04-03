@@ -26,5 +26,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "public/models/**/*", "public/dist"]  // Add this line
+  "include": ["src", "public/models/**/*", "public/dist"]  
 }
