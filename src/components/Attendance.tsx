@@ -80,7 +80,7 @@ const Attendance: React.FC<AttendanceProps> = ({ darkMode }) => {
           formData.append("file", blob, "face.jpg");
 
           const response = await axios.post(
-            "https://c35a-2401-4900-1f38-6c78-6caa-f0ca-119c-bd88.ngrok-free.app/match",
+            "https://f047-2401-4900-1f39-4ce8-2997-c37a-2a7b-f970.ngrok-free.app/match",
             formData,
             { headers: { "Content-Type": "multipart/form-data" } }
           );

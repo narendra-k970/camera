@@ -35,7 +35,7 @@ const Registration: React.FC<RegistrationProps> = ({ darkMode }) => {
     data.append('file', formData.photo);
 
     try {
-      const response = await axios.post('https://c35a-2401-4900-1f38-6c78-6caa-f0ca-119c-bd88.ngrok-free.app/register_user', data, {
+      const response = await axios.post('https://f047-2401-4900-1f39-4ce8-2997-c37a-2a7b-f970.ngrok-free.app/register_user', data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
