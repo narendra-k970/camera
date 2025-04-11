@@ -1,0 +1,161 @@
+/* Layout wrapper */
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f9fafb;
+  }
+  
+  /* Sidebar */
+  .sidebar {
+    position: fixed;
+    top: 70;
+    left: 0;
+    width: 220px;
+    height: 100vh;
+    background-color: #1e1e2f;
+    color: white;
+    padding: 20px;
+    transition: transform 0.3s ease, width 0.3s ease;
+    z-index: 1000;
+  }
+  
+  .sidebar.collapsed {
+    transform: translateX(-100%);
+  }
+  
+  /* Sidebar Links */
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 60px;
+  }
+  
+  .sidebar li,
+  .sidebar a {
+    margin: 20px 0;
+    color: white;
+    text-decoration: none;
+    display: block;
+    transition: color 0.3s ease;
+  }
+  
+  .sidebar a:hover {
+    color: #60a5fa; /* blue-400 */
+  }
+  
+  /* Toggle buttons */
+  .toggle-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .open-btn {
+    position: fixed;
+    top: 70px;
+    left: 20px;
+    z-index: 999;
+    background-color: #1e40af;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  /* Admin layout content */
+  .admin-layout {
+    flex: 1;
+    padding: 0px;
+    margin-left: 220px;
+    transition: all 0.3s ease;
+    width: calc(100% - 220px);
+  }
+  
+  .admin-layout.full-width {
+    margin-left: 0;
+    width: 100%;
+  }
+  /* login */
+  .dashboard-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f2f5;
+    flex-direction: column;
+  }
+  
+  .login-form {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .login-form h2 {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .login-form input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+  }
+  
+  .login-form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .login-form button:hover {
+    background-color: #357ac9;
+  }
+  
+  .dashboard-content {
+    text-align: center;
+  }
+  
+  .logout-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .logout-btn:hover {
+    background-color: #d9363e;
+  }
+  
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .sidebar {
+      width: 100%;
+    }
+  
+    .admin-layout {
+      margin-left: 0;
+      width: 100%;
+    }
+  }
+  

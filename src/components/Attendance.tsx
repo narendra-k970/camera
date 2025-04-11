@@ -48,7 +48,13 @@ const Attendance: React.FC<AttendanceProps> = ({ darkMode }) => {
     let intervalId: number;
 
     const detectFaceAndRecognize = async () => {
-      if (!videoRef.current || !modelsLoaded || isProcessing || !recognitionActive) return;
+      if (
+        !videoRef.current ||
+        !modelsLoaded ||
+        isProcessing ||
+        !recognitionActive
+      )
+        return;
 
       const video = videoRef.current;
       const canvas = canvasRef.current;
@@ -80,7 +86,7 @@ const Attendance: React.FC<AttendanceProps> = ({ darkMode }) => {
           formData.append("file", blob, "face.jpg");
 
           const response = await axios.post(
-            "https://f047-2401-4900-1f39-4ce8-2997-c37a-2a7b-f970.ngrok-free.app/match",
+            "http://52.66.236.1:8000/match",
             formData,
             { headers: { "Content-Type": "multipart/form-data" } }
           );
@@ -89,25 +95,33 @@ const Attendance: React.FC<AttendanceProps> = ({ darkMode }) => {
           if (response.data.matches?.length) {
             const match = response.data.matches[0];
             if (match.status === "Blocked") {
-              toast.error(`Dear ${match.name}, Your access is blocked.`, { position: "top-right" });
+              toast.error(`Dear ${match.name}, Your access is blocked.`, {
+                position: "top-right",
+              });
               setTimeout(() => setIsProcessing(false), 5000);
               return;
             }
-           
+
             if (match.name !== "unknown") {
-              if(match.user_type == "Visitor"){
-                toast.success(`Welcome ${match.name}! Visitor Entry`, { position: "top-right" });
+              if (match.user_type == "Visitor") {
+                toast.success(`Welcome ${match.name}! Visitor Entry`, {
+                  position: "top-right",
+                });
                 setTimeout(() => setIsProcessing(false), 5000);
                 return;
               }
-              toast.success(`Welcome ${match.name}! Attendance recorded.`, { position: "top-right" });
+              toast.success(`Welcome ${match.name}! Attendance recorded.`, {
+                position: "top-right",
+              });
               setTimeout(() => setIsProcessing(false), 5000);
               return;
             }
           }
         } catch (error) {
           console.error("Error:", error);
-          toast.error("Error recognizing face. Please try again.", { position: "top-right" });
+          toast.error("Error recognizing face. Please try again.", {
+            position: "top-right",
+          });
         }
         setIsProcessing(false);
       }
@@ -121,20 +135,34 @@ const Attendance: React.FC<AttendanceProps> = ({ darkMode }) => {
   }, [modelsLoaded, isProcessing, recognitionActive]);
 
   return (
-    <div className={`max-w-md mx-auto p-6 ${darkMode ? "bg-gray-800 text-gray-100" : "bg-gray-100"} rounded-xl shadow-lg`}>
-      <h2 className={`text-2xl font-bold mb-6 ${darkMode ? "text-gray-100" : "text-gray-900"}`}>
-        Smart Attendance 
+    <div
+      className={`max-w-md mx-auto p-6 ${
+        darkMode ? "bg-gray-800 text-gray-100" : "bg-gray-100"
+      } rounded-xl shadow-lg`}
+    >
+      <h2
+        className={`text-2xl font-bold mb-6 ${
+          darkMode ? "text-gray-100" : "text-gray-900"
+        }`}
+      >
+        Smart Attendance
       </h2>
       <div className="relative">
         <video
           ref={videoRef}
-          className={`w-full rounded-lg shadow-lg ${!recognitionActive ? "grayscale opacity-50" : ""}`}
+          className={`w-full rounded-lg shadow-lg ${
+            !recognitionActive ? "grayscale opacity-50" : ""
+          }`}
           muted
           autoPlay
           controls
         />
         {!modelsLoaded && (
-          <p className={`mt-4 text-center ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+          <p
+            className={`mt-4 text-center ${
+              darkMode ? "text-gray-300" : "text-gray-600"
+            }`}
+          >
             Loading face detection models...
           </p>
         )}
@@ -147,7 +175,9 @@ const Attendance: React.FC<AttendanceProps> = ({ darkMode }) => {
         <button
           onClick={() => setRecognitionActive(true)}
           className={`p-2 rounded-full shadow-md transition-all ${
-            recognitionActive ? "bg-gray-500 text-gray-300 cursor-not-allowed" : "bg-blue-500 text-white hover:bg-blue-600"
+            recognitionActive
+              ? "bg-gray-500 text-gray-300 cursor-not-allowed"
+              : "bg-blue-500 text-white hover:bg-blue-600"
           }`}
           disabled={recognitionActive}
         >
@@ -156,7 +186,9 @@ const Attendance: React.FC<AttendanceProps> = ({ darkMode }) => {
         <button
           onClick={() => setRecognitionActive(false)}
           className={`p-2 rounded-full shadow-md transition-all ${
-            !recognitionActive ? "bg-gray-500 text-gray-300 cursor-not-allowed" : "bg-red-500 text-white hover:bg-red-600"
+            !recognitionActive
+              ? "bg-gray-500 text-gray-300 cursor-not-allowed"
+              : "bg-red-500 text-white hover:bg-red-600"
           }`}
           disabled={!recognitionActive}
         >
