@@ -95,7 +95,7 @@ const Registration: React.FC<RegistrationProps> = ({ darkMode }) => {
 
   return (
     <div
-      className={`max-w-md mx-auto p-6 ${
+      className={`max-w-md mx-auto my-5 p-6 ${
         darkMode ? "bg-gray-800 text-gray-100" : "bg-gray-100"
       } rounded-xl shadow-lg transition-colors duration-200`}
     >

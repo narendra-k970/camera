@@ -14,7 +14,7 @@ const Camera: React.FC<CameraProps> = ({ onCapture, darkMode }) => {
     if (videoRef.current) {
       const video = videoRef.current;
       const hls = new Hls();
-      hls.loadSource("http://localhost:8888/stream0/index.m3u8");
+      hls.loadSource("http://52.66.236.1:8888/stream0/index.m3u8");
       hls.attachMedia(video);
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         video.play().catch(console.error);
