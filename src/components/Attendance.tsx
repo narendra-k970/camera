@@ -36,7 +36,7 @@ const Attendance: React.FC<AttendanceProps> = ({ darkMode }) => {
         lowLatencyMode: true,
       });
 
-      hls.loadSource("http://52.66.236.1:8888/stream0/index.m3u8"); // MediaMTX HLS stream
+      hls.loadSource("http://localhost:8888/stream0/index.m3u8"); // MediaMTX HLS stream
       hls.attachMedia(video);
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         video.play().catch(console.error);
