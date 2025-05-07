@@ -18,7 +18,7 @@ const Dashboard = () => {
 
     try {
       const response = await axios.post(
-        "http://52.66.236.1:8000/login",
+        "http://13.233.68.233:8000/login",
         formData
       );
 
