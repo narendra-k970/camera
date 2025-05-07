@@ -11,6 +11,7 @@ import AdminLayout from "./admin/AdminLayout";
 import Visitors from "./admin/Visitors";
 import PrivateRoute from "./admin/ProtectedRoute";
 import EmployeeDetails from "./admin/EmployeeAttendence";
+import VisitorAttendence from "./admin/VisitorAttendence";
 
 function App() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -141,6 +142,7 @@ function App() {
               }
             />
             <Route path="/get_employee_hours_worked_by_date/:emp_id" element={<EmployeeDetails />} />
+            <Route path="/getvisitordata/:VisitorId" element={<VisitorAttendence />} />
           </Routes>
         </main>
       </div>

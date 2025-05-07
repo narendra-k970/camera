@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Pencil, Trash2, Check, X } from "lucide-react";
+import { Pencil, Trash2, Check, X, Eye } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface Visitor {
   id: string;
@@ -19,6 +20,8 @@ const Visitors: React.FC = () => {
     status: "",
   });
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     fetchVisitors();
   }, []);
@@ -31,6 +34,7 @@ const Visitors: React.FC = () => {
       })
       .catch((err) => {
         console.error("Failed to fetch visitors", err);
+        alert("Failed to fetch visitor data");
       });
   };
 
@@ -69,20 +73,22 @@ const Visitors: React.FC = () => {
   const handleChange = (field: keyof Visitor, value: string) => {
     setEditedData((prev) => ({ ...prev, [field]: value }));
   };
+
   const handleDelete = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this visitor?"))
-      return;
+    if (!window.confirm("Are you sure you want to delete this visitor?")) return;
 
     try {
-      await axios.post(
-        `http://13.233.68.233:8000/delete_visitor?visitor_id=${id}`
-      );
+      await axios.post(`http://13.233.68.233:8000/delete_visitor?visitor_id=${id}`);
       alert("Visitor deleted successfully");
       fetchVisitors();
     } catch (error: any) {
       console.error("Failed to delete visitor", error);
       alert("Something went wrong while deleting: " + error.message);
     }
+  };
+
+  const handleViewDetails = (id: string) => {
+    navigate(`/getvisitordata/${id}`);
   };
 
   return (
@@ -145,17 +151,14 @@ const Visitors: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    <button
-                      onClick={() => handleEdit(visitor)}
-                      style={editButtonStyle}
-                    >
+                    <button onClick={() => handleEdit(visitor)} style={editButtonStyle}>
                       <Pencil size={16} />
                     </button>
-                    <button
-                      onClick={() => handleDelete(visitor.id)}
-                      style={deleteButtonStyle}
-                    >
+                    <button onClick={() => handleDelete(visitor.id)} style={deleteButtonStyle}>
                       <Trash2 size={16} />
+                    </button>
+                    <button onClick={() => handleViewDetails(visitor.id)} style={viewButtonStyle}>
+                      <Eye size={16} /> View
                     </button>
                   </>
                 )}
@@ -189,8 +192,17 @@ const editButtonStyle: React.CSSProperties = {
 };
 
 const deleteButtonStyle: React.CSSProperties = {
+  marginRight: "8px",
   padding: "6px 10px",
   backgroundColor: "#ffe0e0",
+  border: "1px solid #999",
+  borderRadius: "4px",
+  cursor: "pointer",
+};
+
+const viewButtonStyle: React.CSSProperties = {
+  padding: "6px 10px",
+  backgroundColor: "#e0ffe0",
   border: "1px solid #999",
   borderRadius: "4px",
   cursor: "pointer",
