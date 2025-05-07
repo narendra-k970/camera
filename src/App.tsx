@@ -1,13 +1,16 @@
+import React from "react";
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { UserCheck, Moon, Sun } from "lucide-react";
 import Registration from "./components/Registration";
 import Attendance from "./components/Attendance";
+import ExitAttendance from "./components/ExitAttendence";
 import Dashboard from "./admin/Dashboard";
 import Employee from "./admin/Employee";
 import AdminLayout from "./admin/AdminLayout";
 import Visitors from "./admin/Visitors";
 import PrivateRoute from "./admin/ProtectedRoute";
+import EmployeeDetails from "./admin/EmployeeAttendence";
 
 function App() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -49,6 +52,17 @@ function App() {
                   Attendance
                 </Link>
                 <Link
+                  to="/exit"
+                  className={`flex items-center px-3 py-2 ${
+                    darkMode
+                      ? "text-gray-200 hover:text-blue-400"
+                      : "text-gray-700 hover:text-blue-600"
+                  }`}
+                >
+                  <UserCheck className="w-5 h-5 mr-2" />
+                  ExitAttendance
+                </Link>
+                <Link
                   to="/register"
                   className={`flex items-center px-3 py-2 ${
                     darkMode
@@ -88,9 +102,10 @@ function App() {
           </div>
         </nav>
 
-        <main className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <main className="">
           <Routes>
             <Route path="/" element={<Attendance darkMode={darkMode} />} />
+            <Route path="/exit" element={<ExitAttendance darkMode={darkMode} />} />
             <Route
               path="/register"
               element={<Registration darkMode={darkMode} />}
@@ -125,6 +140,7 @@ function App() {
                 </PrivateRoute>
               }
             />
+            <Route path="/get_employee_hours_worked_by_date/:emp_id" element={<EmployeeDetails />} />
           </Routes>
         </main>
       </div>

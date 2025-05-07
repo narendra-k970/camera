@@ -21,11 +21,10 @@ const Registration: React.FC<RegistrationProps> = ({ darkMode }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.photo) {
-      // alert('Please capture a photo');
       toast.error("Please capture a photo", { position: "top-right" });
       return;
     }
-
+  
     const params = {
       user_type: activeTab,
       name: formData.name,
@@ -33,24 +32,30 @@ const Registration: React.FC<RegistrationProps> = ({ darkMode }) => {
     };
     const data = new FormData();
     data.append("file", formData.photo);
-
+  
     try {
       const response = await axios.post(
-        "http://52.66.236.1:8000/register_user",
+        "http://13.233.68.233:8000/register_user",
         data,
         {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-          params: params, // Pass the params here
-          // Add timeout and validate SSL certificate
+          params: params,
           timeout: 10000,
           validateStatus: (status) => status >= 200 && status < 300,
         }
       );
+  
       console.log("Response:", response.data);
-      if (response.data) {
-        // alert(`${activeTab} registered successfully!`);
+      const match = response.data;
+
+      // Check response for already registered case
+      if (match.status === "registered") {
+        toast.info(`${activeTab} is already registered.`, {
+          position: "top-right",
+        });
+      } else {
         toast.success(`${activeTab} registered successfully!`, {
           position: "top-right",
         });
@@ -60,18 +65,15 @@ const Registration: React.FC<RegistrationProps> = ({ darkMode }) => {
       console.error("Error registering:", error);
       if (axios.isAxiosError(error)) {
         if (error.code === "ECONNABORTED") {
-          // alert('Connection timed out. Please try again.');
           toast.error("Connection timed out. Please try again.", {
             position: "top-right",
           });
         } else if (!error.response) {
-          // alert('Network error. Please check your connection and try again.');
           toast.error(
             "Network error. Please check your connection and try again.",
             { position: "top-right" }
           );
         } else {
-          // alert(`Registration failed: ${error.response.data?.message || 'Unknown error'}`);
           toast.error(
             `Registration failed: ${
               error.response.data?.message || "Unknown error"
@@ -80,13 +82,13 @@ const Registration: React.FC<RegistrationProps> = ({ darkMode }) => {
           );
         }
       } else {
-        // alert('An unexpected error occurred. Please try again.');
         toast.error("An unexpected error occurred. Please try again.", {
           position: "top-right",
         });
       }
     }
   };
+  
 
   const handleCapture = (blob: Blob) => {
     const file = new File([blob], "photo.jpg", { type: "image/jpeg" });

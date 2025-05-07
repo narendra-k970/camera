@@ -2,7 +2,7 @@
 .dashboard-container {
     display: flex;
     min-height: 100vh;
-    background-color: #f9fafb;
+    /* background-color: #f9fafb; */
   }
   
   /* Sidebar */
@@ -71,11 +71,28 @@
   
   /* Admin layout content */
   .admin-layout {
-    flex: 1;
-    padding: 0px;
-    margin-left: 220px;
-    transition: all 0.3s ease;
-    width: calc(100% - 220px);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 70vw;
+    overflow: hidden;
+  }
+  /* .header {
+    height: 60px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  } */
+  .content {
+    flex-grow: 1;
+    /* overflow-y: auto; */
+    /* overflow-x: auto; */
+    padding: 20px;
   }
   
   .admin-layout.full-width {

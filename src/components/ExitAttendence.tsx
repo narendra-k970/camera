@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import * as faceapi from "face-api.js"; 
+import * as faceapi from "face-api.js";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { PlayCircle, StopCircle } from "lucide-react";
@@ -10,7 +10,7 @@ interface AttendanceProps {
   darkMode: boolean;
 }
 
-const Attendance: React.FC<AttendanceProps> = ({ darkMode }) => {
+const ExitAttendance: React.FC<AttendanceProps> = ({ darkMode }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -26,7 +26,7 @@ const Attendance: React.FC<AttendanceProps> = ({ darkMode }) => {
     loadModels();
   }, []);
 
-  // Load HLS Stream into Video Element
+  // Load HLS Stream
   useEffect(() => {
     if (videoRef.current) {
       const video = videoRef.current;
@@ -36,7 +36,7 @@ const Attendance: React.FC<AttendanceProps> = ({ darkMode }) => {
         lowLatencyMode: true,
       });
 
-      hls.loadSource("http://localhost:8888/stream0/index.m3u8"); 
+      hls.loadSource("http://localhost:8888/stream1/index.m3u8");
       hls.attachMedia(video);
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         video.play().catch(console.error);
@@ -63,7 +63,6 @@ const Attendance: React.FC<AttendanceProps> = ({ darkMode }) => {
       const context = canvas.getContext("2d");
       if (!context) return;
 
-      // Capture Frame from HLS Stream
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -72,86 +71,63 @@ const Attendance: React.FC<AttendanceProps> = ({ darkMode }) => {
         canvas,
         new faceapi.TinyFaceDetectorOptions()
       );
-      console.log("Detection:", detection);
 
       if (detection) {
         setIsProcessing(true);
         try {
-          console.log("Inside Detection...");
           const imageSrc = canvas.toDataURL("image/jpeg");
-          if (!imageSrc) return;
-
           const blob = await fetch(imageSrc).then((res) => res.blob());
           const formData = new FormData();
           formData.append("file", blob, "face.jpg");
-          formData.append("Type", "Entry")
+          formData.append("Type", "Exit");
 
           const response = await axios.post(
-            "http://13.233.68.233:8000/entry_match",
+            "http://13.233.68.233:8000/exit_match",
             formData,
             { headers: { "Content-Type": "multipart/form-data" } }
           );
-          console.log("Response:", response.data);
 
-          if (response.data.matches?.length) {
-            const match = response.data;
-          
-            if (match.status === "entry_exists") {
-              toast.warning("Entry already exists. Please exit first.", {
-                position: "top-right",
-              });
-              setTimeout(() => setIsProcessing(false), 1000);
-              return;
-            }
-            if (match.status === "unknown") {
-              toast.error("User not registered. Please register first.", {
-                position: "top-right",
-              });
-              setTimeout(() => setIsProcessing(false), 1000);
-              return;
-            }
-          
-            if (match.matches?.status === "Blocked") {
-              toast.error(`Dear ${match.name}, Your access is blocked.`, {
-                position: "top-right",
-              });
-              setTimeout(() => setIsProcessing(false), 1000);
-              return;
-            }
-          
-            if (match.status === "ok") {
-              if (match.matches.user_type === "Visitor") {
-                toast.success(`Welcome ${match.name}! Visitor Entry`, {
-                  position: "top-right",
-                });
-              } else {
-                toast.success(`Welcome ${match.name}! Attendance recorded.`, {
-                  position: "top-right",
-                });
-              }
-              setTimeout(() => setIsProcessing(false), 1000);
-              return;
-            }
-          } else {
-            // No match or unrecognized person
-            toast.error("User not registered. Please register first.", {
+          const match = response.data;
+
+          if (match.status === "entry_not_found") {
+            toast.warning("No active entry found. Please enter first.", {
               position: "top-right",
             });
-            setTimeout(() => setIsProcessing(false), 1000);
-            return;
-          }          
+          } else if (match.status === "unknown") {
+            toast.error("User not recognized. Please register first.", {
+              position: "top-right",
+            });
+          } else if (match.matches?.status === "Blocked") {
+            toast.error(`Dear ${match.name}, your access is blocked.`, {
+              position: "top-right",
+            });
+          } else if (match.status === "ok") {
+            if (match.matches.user_type === "Visitor") {
+              toast.success(`Goodbye ${match.name}! Visitor exit recorded.`, {
+                position: "top-right",
+              });
+            } else {
+              toast.success(`Goodbye ${match.name}! Exit recorded.`, {
+                position: "top-right",
+              });
+            }
+          } else {
+            toast.error("Face detected, but no valid match found.", {
+              position: "top-right",
+            });
+          }
         } catch (error) {
           console.error("Error:", error);
           toast.error("Error recognizing face. Please try again.", {
             position: "top-right",
           });
         }
-        setIsProcessing(false);
+        setTimeout(() => setIsProcessing(false), 1000);
       }
     };
 
     if (modelsLoaded && recognitionActive) {
-      intervalId = window.setInterval(detectFaceAndRecognize, 1000); // Check every 1s
+      intervalId = window.setInterval(detectFaceAndRecognize, 1000);
     }
 
     return () => clearInterval(intervalId);
@@ -168,7 +144,7 @@ const Attendance: React.FC<AttendanceProps> = ({ darkMode }) => {
           darkMode ? "text-gray-100" : "text-gray-900"
         }`}
       >
-        Smart Attendance
+        Smart Exit
       </h2>
       <div className="relative">
         <video
@@ -191,7 +167,6 @@ const Attendance: React.FC<AttendanceProps> = ({ darkMode }) => {
         )}
       </div>
 
-      {/* Hidden canvas for capturing frames */}
       <canvas ref={canvasRef} className="hidden" />
 
       <div className="flex justify-center mt-4 space-x-4">
@@ -223,4 +198,4 @@ const Attendance: React.FC<AttendanceProps> = ({ darkMode }) => {
   );
 };
 
-export default Attendance;
+export default ExitAttendance;

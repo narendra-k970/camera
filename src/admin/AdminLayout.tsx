@@ -8,11 +8,14 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <div className="dashboard-container">
       <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
-      <div className={`admin-layout ${collapsed ? 'full-width' : 'with-sidebar'}`}>
-        {children}
+      <div className={`admin-layout ${collapsed ? 'full-width' : ''}`}>
+        <div className="content">
+          {children}
+        </div>
       </div>
     </div>
   );
 };
+
 
 export default AdminLayout;

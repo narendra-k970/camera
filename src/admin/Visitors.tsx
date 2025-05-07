@@ -25,7 +25,7 @@ const Visitors: React.FC = () => {
 
   const fetchVisitors = () => {
     axios
-      .post("http://52.66.236.1:8000/get_all_visitors")
+      .post("http://13.233.68.233:8000/get_all_visitors")
       .then((res) => {
         setVisitors(res.data.visitors);
       })
@@ -48,7 +48,7 @@ const Visitors: React.FC = () => {
     try {
       const { id, name, type, status } = editedData;
 
-      const url = `http://52.66.236.1:8000/update_visitor_status?visitor_id=${encodeURIComponent(
+      const url = `http://13.233.68.233:8000/update_visitor_status?visitor_id=${encodeURIComponent(
         id
       )}&name=${encodeURIComponent(name)}&visitor_type=${encodeURIComponent(
         type
@@ -75,7 +75,7 @@ const Visitors: React.FC = () => {
 
     try {
       await axios.post(
-        `http://52.66.236.1:8000/delete_visitor?visitor_id=${id}`
+        `http://13.233.68.233:8000/delete_visitor?visitor_id=${id}`
       );
       alert("Visitor deleted successfully");
       fetchVisitors();
