@@ -97,17 +97,17 @@ const ExitAttendance: React.FC<AttendanceProps> = ({ darkMode }) => {
             toast.error("User not recognized. Please register first.", {
               position: "top-right",
             });
-          } else if (match.matches?.status === "Blocked") {
-            toast.error(`Dear ${match.name}, your access is blocked.`, {
+          } else if (match.matches[0]?.status === "Blocked") {
+            toast.error(`Dear ${match.matches[0].name}, your access is blocked.`, {
               position: "top-right",
             });
           } else if (match.status === "ok") {
-            if (match.matches.user_type === "Visitor") {
-              toast.success(`Goodbye ${match.name}! Visitor exit recorded.`, {
+            if (match.matches[0].user_type === "Visitor") {
+              toast.success(`Goodbye ${match.matches[0].name}! Visitor exit recorded.`, {
                 position: "top-right",
               });
             } else {
-              toast.success(`Goodbye ${match.name}! Exit recorded.`, {
+              toast.success(`Goodbye ${match.matches[0].name}! Exit recorded.`, {
                 position: "top-right",
               });
             }

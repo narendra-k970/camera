@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import * as faceapi from "face-api.js"; 
+import * as faceapi from "face-api.js";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { PlayCircle, StopCircle } from "lucide-react";
@@ -36,7 +36,7 @@ const Attendance: React.FC<AttendanceProps> = ({ darkMode }) => {
         lowLatencyMode: true,
       });
 
-      hls.loadSource("http://localhost:8888/stream0/index.m3u8"); 
+      hls.loadSource("http://localhost:8888/stream0/index.m3u8");
       hls.attachMedia(video);
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         video.play().catch(console.error);
@@ -84,7 +84,7 @@ const Attendance: React.FC<AttendanceProps> = ({ darkMode }) => {
           const blob = await fetch(imageSrc).then((res) => res.blob());
           const formData = new FormData();
           formData.append("file", blob, "face.jpg");
-          formData.append("Type", "Entry")
+          formData.append("Type", "Entry");
 
           const response = await axios.post(
             "http://13.233.68.233:8000/entry_match",
@@ -93,9 +93,9 @@ const Attendance: React.FC<AttendanceProps> = ({ darkMode }) => {
           );
           console.log("Response:", response.data);
 
-          if (response.data.matches?.length) {
+          if (response.data) {
             const match = response.data;
-          
+            console.log(match);
             if (match.status === "entry_exists") {
               toast.warning("Entry already exists. Please exit first.", {
                 position: "top-right",
@@ -110,24 +110,37 @@ const Attendance: React.FC<AttendanceProps> = ({ darkMode }) => {
               setTimeout(() => setIsProcessing(false), 1000);
               return;
             }
-          
-            if (match.matches?.status === "Blocked") {
-              toast.error(`Dear ${match.name}, Your access is blocked.`, {
-                position: "top-right",
-              });
+
+            if (match.matches[0]?.status === "Blocked") {
+              toast.error(
+                `Dear ${match.matches[0].name}, Your access is blocked.`,
+                {
+                  position: "top-right",
+                }
+              );
               setTimeout(() => setIsProcessing(false), 1000);
               return;
             }
-          
+
             if (match.status === "ok") {
-              if (match.matches.user_type === "Visitor") {
-                toast.success(`Welcome ${match.name}! Visitor Entry`, {
-                  position: "top-right",
-                });
+              if (match.matches[0].user_type === "Visitor") {
+                toast.success(
+                  `Welcome ${match.matches[0].name}! Visitor Entry`,
+                  {
+                    position: "top-right",
+                  }
+                );
+              } if (match.matches[0].user_type === "Employee") {
+                toast.success(
+                  `Welcome ${match.matches[0].name}! Employee Entry`,
+                  {
+                    position: "top-right",
+                  }
+                )
               } else {
-                toast.success(`Welcome ${match.name}! Attendance recorded.`, {
-                  position: "top-right",
-                });
+               toast.error("Error recognizing face. Please try again.", {
+            position: "top-right",
+          });
               }
               setTimeout(() => setIsProcessing(false), 1000);
               return;
@@ -139,7 +152,7 @@ const Attendance: React.FC<AttendanceProps> = ({ darkMode }) => {
             });
             setTimeout(() => setIsProcessing(false), 1000);
             return;
-          }          
+          }
         } catch (error) {
           console.error("Error:", error);
           toast.error("Error recognizing face. Please try again.", {
