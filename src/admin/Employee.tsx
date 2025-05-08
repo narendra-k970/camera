@@ -20,6 +20,8 @@ const Employee: React.FC = () => {
     status: "",
   });
 
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 10;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,7 +51,9 @@ const Employee: React.FC = () => {
   const handleSave = async () => {
     try {
       const { id, name, department, status } = editedData;
-      const url = `http://13.233.68.233:8000/update_employee_status?emp_id=${id}&name=${encodeURIComponent(name)}&department=${encodeURIComponent(department)}&status=${encodeURIComponent(status || "")}`;
+      const url = `http://13.233.68.233:8000/update_employee_status?emp_id=${id}&name=${encodeURIComponent(
+        name
+      )}&department=${encodeURIComponent(department)}&status=${encodeURIComponent(status || "")}`;
 
       await axios.post(url);
       alert("Details updated successfully");
@@ -79,6 +83,12 @@ const Employee: React.FC = () => {
     navigate(`/get_employee_hours_worked_by_date/${id}`);
   };
 
+  // Pagination logic
+  const indexOfLast = currentPage * itemsPerPage;
+  const indexOfFirst = indexOfLast - itemsPerPage;
+  const currentEmployees = employees.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(employees.length / itemsPerPage);
+
   return (
     <div style={{ padding: "20px" }}>
       <h1 style={{ fontSize: "24px", marginBottom: "20px" }}>All Employees</h1>
@@ -94,14 +104,16 @@ const Employee: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {employees.map((emp) => (
+          {currentEmployees.map((emp) => (
             <tr key={emp.id}>
               <td style={tdStyle}>{emp.id}</td>
               <td style={tdStyle}>
                 {editingId === emp.id ? (
                   <input
                     value={editedData.name}
-                    onChange={(e) => setEditedData((prev) => ({ ...prev, name: e.target.value }))}
+                    onChange={(e) =>
+                      setEditedData((prev) => ({ ...prev, name: e.target.value }))
+                    }
                   />
                 ) : (
                   emp.name
@@ -111,7 +123,9 @@ const Employee: React.FC = () => {
                 {editingId === emp.id ? (
                   <input
                     value={editedData.department}
-                    onChange={(e) => setEditedData((prev) => ({ ...prev, department: e.target.value }))}
+                    onChange={(e) =>
+                      setEditedData((prev) => ({ ...prev, department: e.target.value }))
+                    }
                   />
                 ) : (
                   emp.department
@@ -121,13 +135,15 @@ const Employee: React.FC = () => {
                 {editingId === emp.id ? (
                   <input
                     value={editedData.status || ""}
-                    onChange={(e) => setEditedData((prev) => ({ ...prev, status: e.target.value }))}
+                    onChange={(e) =>
+                      setEditedData((prev) => ({ ...prev, status: e.target.value }))
+                    }
                   />
                 ) : (
                   emp.status || "Not Assigned"
                 )}
               </td>
-              <td style={tdStyle}>
+              <td style={tdStyle1}>
                 {editingId === emp.id ? (
                   <>
                     <button onClick={handleSave} style={editButtonStyle}>
@@ -155,6 +171,27 @@ const Employee: React.FC = () => {
           ))}
         </tbody>
       </table>
+
+      {/* Pagination Controls */}
+      <div style={{ marginTop: "20px", textAlign: "center" }}>
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          style={paginationButtonStyle}
+        >
+          ⬅ Prev
+        </button>
+        <span style={{ margin: "0 10px" }}>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+          style={paginationButtonStyle}
+        >
+          Next ➡
+        </button>
+      </div>
     </div>
   );
 };
@@ -170,8 +207,14 @@ const tdStyle: React.CSSProperties = {
   border: "1px solid #ddd",
 };
 
+const tdStyle1: React.CSSProperties = {
+  padding: "8px",
+  display: "flex",
+  gap: "5px",
+  border: "1px solid #ddd",
+};
+
 const editButtonStyle: React.CSSProperties = {
-  marginRight: "5px",
   padding: "6px",
   backgroundColor: "#e0e0ff",
   border: "1px solid #999",
@@ -180,7 +223,6 @@ const editButtonStyle: React.CSSProperties = {
 };
 
 const deleteButtonStyle: React.CSSProperties = {
-  marginRight: "5px",
   padding: "6px",
   backgroundColor: "#ffe0e0",
   border: "1px solid #999",
@@ -192,6 +234,17 @@ const viewButtonStyle: React.CSSProperties = {
   padding: "6px",
   backgroundColor: "#e0ffe0",
   border: "1px solid #999",
+  borderRadius: "4px",
+  cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
+};
+
+const paginationButtonStyle: React.CSSProperties = {
+  padding: "6px 12px",
+  margin: "0 5px",
+  backgroundColor: "#f0f0f0",
+  border: "1px solid #ccc",
   borderRadius: "4px",
   cursor: "pointer",
 };

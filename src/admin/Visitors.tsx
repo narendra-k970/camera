@@ -20,6 +20,9 @@ const Visitors: React.FC = () => {
     status: "",
   });
 
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const entriesPerPage = 10;
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -91,6 +94,14 @@ const Visitors: React.FC = () => {
     navigate(`/getvisitordata/${id}`);
   };
 
+  // Pagination logic
+  const indexOfLastEntry = currentPage * entriesPerPage;
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+  const currentEntries = visitors.slice(indexOfFirstEntry, indexOfLastEntry);
+  const totalPages = Math.ceil(visitors.length / entriesPerPage);
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
   return (
     <div style={{ padding: "20px" }}>
       <h1 style={{ fontSize: "24px", marginBottom: "20px" }}>All Visitors</h1>
@@ -106,7 +117,7 @@ const Visitors: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {visitors.map((visitor) => (
+          {currentEntries.map((visitor) => (
             <tr key={visitor.id}>
               <td style={tdStyle}>{visitor.id}</td>
               <td style={tdStyle}>
@@ -139,7 +150,7 @@ const Visitors: React.FC = () => {
                   visitor.status || "Not Assigned"
                 )}
               </td>
-              <td style={tdStyle}>
+              <td style={tdStyle1}>
                 {editingId === visitor.id ? (
                   <>
                     <button onClick={handleSave} style={editButtonStyle}>
@@ -167,6 +178,23 @@ const Visitors: React.FC = () => {
           ))}
         </tbody>
       </table>
+
+      {/* Pagination Controls */}
+      <div style={paginationContainerStyle}>
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index + 1}
+            onClick={() => paginate(index + 1)}
+            style={{
+              ...paginationButtonStyle,
+              backgroundColor: currentPage === index + 1 ? "#007bff" : "#fff",
+              color: currentPage === index + 1 ? "#fff" : "#000",
+            }}
+          >
+            {index + 1}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
@@ -179,6 +207,12 @@ const thStyle: React.CSSProperties = {
 
 const tdStyle: React.CSSProperties = {
   padding: "5px",
+  border: "1px solid #ddd",
+};
+
+const tdStyle1: React.CSSProperties = {
+  padding: "5px",
+  display: "flex",
   border: "1px solid #ddd",
 };
 
@@ -204,6 +238,22 @@ const viewButtonStyle: React.CSSProperties = {
   padding: "6px 10px",
   backgroundColor: "#e0ffe0",
   border: "1px solid #999",
+  borderRadius: "4px",
+  cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
+};
+
+const paginationContainerStyle: React.CSSProperties = {
+  display: "flex",
+  justifyContent: "flex-end",
+  marginTop: "20px",
+};
+
+const paginationButtonStyle: React.CSSProperties = {
+  marginLeft: "5px",
+  padding: "6px 12px",
+  border: "1px solid #ccc",
   borderRadius: "4px",
   cursor: "pointer",
 };
